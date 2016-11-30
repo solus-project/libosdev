@@ -37,12 +37,12 @@ func init() {
 
 // SetStdout will override the stdout writer used in the exec commands
 func SetStdout(w io.Writer) {
-	stdout = f
+	stdout = w
 }
 
 // SetStderr will override the stderr writer used in the exec commands
 func SetStderr(w io.Writer) {
-	stderr = f
+	stderr = w
 }
 
 // Internal helper for the Exec functions
