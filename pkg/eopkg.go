@@ -44,11 +44,18 @@ type EopkgManager struct {
 	targetMode bool // Whether we're in target mode or not.
 
 	dbusActive bool // Whether we have dbus alive or not
+
+	cacheSource string // Where we find the cache directory
 }
 
 // NewEopkgManager will return a newly initialised EopkgManager
 func NewEopkgManager() *EopkgManager {
-	return &EopkgManager{targetMode: false}
+	return &EopkgManager{targetMode: false, cacheSource: EopkgCacheDirectory}
+}
+
+// SetCacheDirectory is used to override the system cache directory
+func (e *EopkgManager) SetCacheDirectory(source string) {
+	e.cacheSource = source
 }
 
 // Init will check that eopkg is available host side
@@ -82,7 +89,7 @@ func (e *EopkgManager) InitRoot(root string) error {
 	}
 
 	// Attempt to create the system wide cache directory
-	if err := os.MkdirAll(EopkgCacheDirectory, 00755); err != nil {
+	if err := os.MkdirAll(e.cacheSource, 00755); err != nil {
 		return err
 	}
 
@@ -95,7 +102,7 @@ func (e *EopkgManager) InitRoot(root string) error {
 
 	// Now attempt to bind mount the cache directory to be .. well. usable
 	e.cacheTarget = filepath.Join(root, "var", "cache", "eopkg", "packages")
-	if err := disk.GetMountManager().BindMount(EopkgCacheDirectory, e.cacheTarget); err != nil {
+	if err := disk.GetMountManager().BindMount(e.cacheSource, e.cacheTarget); err != nil {
 		return err
 	}
 
