@@ -19,10 +19,31 @@ package commands
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+var (
+	stdout io.Writer
+	stderr io.Writer
+)
+
+func init() {
+	stdout = os.Stdout
+	stderr = os.Stderr
+}
+
+// SetStdout will override the stdout writer used in the exec commands
+func SetStdout(w io.Writer) {
+	stdout = f
+}
+
+// SetStderr will override the stderr writer used in the exec commands
+func SetStderr(w io.Writer) {
+	stderr = f
+}
 
 // Internal helper for the Exec functions
 func execHelper(command string, args []string) (*exec.Cmd, error) {
@@ -35,8 +56,8 @@ func execHelper(command string, args []string) (*exec.Cmd, error) {
 		}
 	}
 	c := exec.Command(command, args...)
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
+	c.Stdout = stdout
+	c.Stderr = stderr
 	return c, nil
 }
 
