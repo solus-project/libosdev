@@ -165,6 +165,24 @@ func (m *MountManager) BindMount(sourcepath, destpath string, options ...string)
 	return m.Mount(sourcepath, destpath, "--bind", options...)
 }
 
+// RemountReadonly allows forcing a bindmount to be read-only, because for whatever
+// reason, to this day, Linux _still_ ignores "-o ro" when issuing a bind mount.
+func (m *MountManager) RemountReadonly(destpath string) error {
+	dpath, err := filepath.Abs(destpath)
+	if err != nil {
+		return err
+	}
+	command := []string{
+		"-o",
+		"remount,ro",
+		dpath,
+	}
+	if err := commands.ExecStdoutArgs("mount", command); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Unmount will attempt to unmount the given path
 func (m *MountManager) Unmount(mountpoint string) error {
 	dpath, err := filepath.Abs(mountpoint)
