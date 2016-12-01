@@ -28,11 +28,15 @@ import (
 var (
 	stdout io.Writer
 	stderr io.Writer
+	stdin  io.Reader
 )
 
 func init() {
 	stdout = os.Stdout
 	stderr = os.Stderr
+
+	// By default, stdin is disabled in the commands package
+	stdin = nil
 }
 
 // SetStdout will override the stdout writer used in the exec commands
@@ -43,6 +47,11 @@ func SetStdout(w io.Writer) {
 // SetStderr will override the stderr writer used in the exec commands
 func SetStderr(w io.Writer) {
 	stderr = w
+}
+
+// SetStdin will override the stdin reader used in the exec commands
+func SetStdin(r io.Reader) {
+	stdin = r
 }
 
 // Internal helper for the Exec functions
@@ -58,6 +67,7 @@ func execHelper(command string, args []string) (*exec.Cmd, error) {
 	c := exec.Command(command, args...)
 	c.Stdout = stdout
 	c.Stderr = stderr
+	c.Stdin = stdin
 	return c, nil
 }
 
