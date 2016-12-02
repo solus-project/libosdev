@@ -97,7 +97,8 @@ func (m *MountEntry) UmountSync() error {
 // so that in every event the mountpoints are always taken back down, ensuring
 // no usability issues for the USpin user.
 type MountManager struct {
-	mounts map[string]*MountEntry
+	mounts        map[string]*MountEntry
+	privateMounts bool // Whether we mount private or not
 }
 
 var mountManager *MountManager
@@ -105,11 +106,18 @@ var mountManager *MountManager
 func init() {
 	mountManager = &MountManager{}
 	mountManager.mounts = make(map[string]*MountEntry)
+	mountManager.privateMounts = false
 }
 
 // GetMountManager will return the global mount manager
 func GetMountManager() *MountManager {
 	return mountManager
+}
+
+// SetPrivateMounts will instruct MountManager to use --make-private whenever
+// mounting a new device.
+func (m *MountManager) SetPrivateMounts(b bool) {
+	m.privateMounts = b
 }
 
 // insertMount will store the given mount point in order to permit deletion of it later
@@ -151,6 +159,11 @@ func (m *MountManager) Mount(sourcepath, destpath, filesystem string, options ..
 		}...)
 	} else {
 		command = append(command, "--bind")
+	}
+
+	// Set up private mounts if instructed to do so
+	if m.privateMounts {
+		command = append(command, "--make-private")
 	}
 
 	if err := commands.ExecStdoutArgs("mount", command); err != nil {
