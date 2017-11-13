@@ -104,20 +104,20 @@ func ChrootExec(dir, command string) error {
 
 // AddGroup will chroot into the given root and add a group
 func AddGroup(root, groupName string, groupID int) error {
-	cmd := fmt.Sprintf("groupadd -g %d \"%s\"", groupID, groupName)
+	cmd := fmt.Sprintf("/usr/sbin/groupadd -g %d \"%s\"", groupID, groupName)
 	return ChrootExec(root, cmd)
 }
 
 // AddUser will chroot into the given root and add a user
 func AddUser(root, userName, gecos, home, shell string, uid, gid int) error {
-	cmd := fmt.Sprintf("useradd -m -d \"%s\" -s \"%s\" -u %d -g %d \"%s\" -c \"%s\"",
+	cmd := fmt.Sprintf("/usr/sbin/useradd -m -d \"%s\" -s \"%s\" -u %d -g %d \"%s\" -c \"%s\"",
 		home, shell, uid, gid, userName, gecos)
 	return ChrootExec(root, cmd)
 }
 
 // AddSystemUser will chroot into the given root and add a system user
 func AddSystemUser(root, userName, gecos, home, shell string, uid, gid int) error {
-	cmd := fmt.Sprintf("useradd -m -d \"%s\" -r -s \"%s\" -u %d -g %d \"%s\" -c \"%s\"",
+	cmd := fmt.Sprintf("/usr/sbin/useradd -m -d \"%s\" -r -s \"%s\" -u %d -g %d \"%s\" -c \"%s\"",
 		home, shell, uid, gid, userName, gecos)
 	return ChrootExec(root, cmd)
 }
