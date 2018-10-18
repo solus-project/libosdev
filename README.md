@@ -5,9 +5,9 @@ libosdev
 
 Helper library for Solus tooling, such as [USpin](https://github.com/solus-project/USpin) and soon `solbuild`.
 
-libosdev is a [Solus project](https://solus-project.com/).
+libosdev is a [Solus project](https://getsol.us/).
 
-![logo](https://build.solus-project.com/logo.png)
+![logo](https://build.getsol.us/logo.png)
 
 License
 -------
